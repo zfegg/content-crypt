@@ -1,2 +1,2 @@
 # http-content-crypt
-Zend Mvc http content crypt
+Psr7 http content crypt
