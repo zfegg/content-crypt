@@ -1,13 +1,18 @@
 {
   "name": "zfegg/http-content-crypt",
-  "description": "Zend Mvc http content crypt",
-  "minimum-stability": "stable",
+  "description": "HTTP content crypt(RsaAes) for PSR7 middleware",
   "license": "MIT",
   "authors": [
     {
       "name": "Moln",
       "email": "moln.xie@gmail.com"
     }
+  ],
+  "keywords": [
+    "middleware",
+    "psr7",
+    "crypt",
+    "zfegg"
   ],
   "require": {
     "zendframework/zend-crypt": "^3.2",
