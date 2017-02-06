@@ -10,8 +10,10 @@
   ],
   "keywords": [
     "middleware",
-    "psr7",
+    "content",
+    "signature",
     "crypt",
+    "psr7",
     "zfegg"
   ],
   "require": {
