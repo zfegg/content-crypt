@@ -1,6 +1,6 @@
 {
   "name": "zfegg/http-content-crypt",
-  "description": "HTTP content crypt(RsaAes) for PSR7 middleware",
+  "description": "HTTP content crypt/signature for PSR7 middleware",
   "license": "MIT",
   "authors": [
     {
