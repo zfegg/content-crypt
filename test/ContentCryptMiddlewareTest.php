@@ -13,7 +13,7 @@ use Zfegg\HttpContentCrypt\ContentCryptMiddleware;
 class ContentCryptMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testFactory()
+    public function testInvoke()
     {
 
         $middleware = new ContentCryptMiddleware();

@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
- * Class ContentSignatureMiddleware
+ * Http body signature verification using hash HMAC.
  * @package Zfegg\HttpContentCrypt
  *
  * Http Header example:
@@ -29,10 +29,22 @@ class ContentSignatureMiddleware
 
         $line = $request->getHeaderLine(self::HEADER_CONTENT_SIGNATURE);
         $params = HeaderUtils::parseHeader($line, ['keyid' => null, 'alg' => 'md5', 'value' => null]);
-        $hash = hash_hmac($params['alg'], $request->getBody(), $this->fetchKey($params['keyid'], $request));
+        $key = $this->fetchKey($params['keyid'], $request);
+        $hash = hash_hmac($params['alg'], $request->getBody(), $key);
+
+        if (!in_array($params['alg'], hash_algos())) {
+            return $this->errorResponse('Invalid algorithm.', 400);
+        }
 
         if ($params['value'] == $hash) {
-            return $next($request, $response);
+            $response = $next($request, $response);
+            $responseBodySign = hash_hmac($params['alg'], (string)$response->getBody(), $key);
+            $response = $response->withHeader(
+                self::HEADER_CONTENT_SIGNATURE,
+                sprintf('alg=%s; value=%s', $params['alg'], $responseBodySign)
+            );
+
+            return $response;
         } else {
             return $this->errorResponse('Invalid signature', 401);
         }
@@ -53,5 +65,23 @@ class ContentSignatureMiddleware
         } else {
             throw new \InvalidArgumentException('Invalid "fetchKeyCallback"');
         }
+    }
+
+    /**
+     * @return callable|\string[]
+     */
+    public function getFetchKeyCallback()
+    {
+        return $this->fetchKeyCallback;
+    }
+
+    /**
+     * @param callable|\string[] $fetchKeyCallback
+     * @return $this
+     */
+    public function setFetchKeyCallback($fetchKeyCallback)
+    {
+        $this->fetchKeyCallback = $fetchKeyCallback;
+        return $this;
     }
 }
