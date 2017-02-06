@@ -133,7 +133,7 @@ class ContentCryptMiddleware
             return $this->errorResponse('Decrypt key error.');
         }
 
-        $cryptoKey = $this->parseHeader($request->getHeaderLine(self::HEADER_CRYPTO_KEY));
+        $cryptoKey = HeaderUtils::parseHeader($request->getHeaderLine(self::HEADER_CRYPTO_KEY));
 
         if (empty($cryptoKey['keyid']) || empty($cryptoKey['data'])) {
             return $this->errorResponse('Invalid crypto key.');
@@ -224,22 +224,6 @@ class ContentCryptMiddleware
     protected function errorResponse($message, $status = 400)
     {
         return new JsonResponse(['status' => $status, 'message' => $message], $status);
-    }
-
-    protected function parseHeader($header)
-    {
-        $params = [];
-        $kvs = preg_split('@[;]\s*@', $header);
-
-        foreach ($kvs as $kv) {
-            list($k, $v) = explode('=', $kv, 2) + [null, null];
-
-            if ($k) {
-                $params[$k] = urldecode($v);
-            }
-        }
-
-        return $params;
     }
 
     public function fetchRsa($keyId)
