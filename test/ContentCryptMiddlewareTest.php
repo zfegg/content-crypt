@@ -2,7 +2,6 @@
 
 namespace ZfeggTest\HttpContentCrypt;
 
-
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Crypt\PublicKey\Rsa;
 use Zend\Crypt\Symmetric\Openssl;
