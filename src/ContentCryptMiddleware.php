@@ -140,7 +140,7 @@ class ContentCryptMiddleware
         }
 
         try {
-            $key = $this->fetchRsa($cryptoKey['keyid'])->decrypt($cryptoKey['data']);
+            $key = $this->fetchRsa($cryptoKey['keyid'], $request)->decrypt($cryptoKey['data']);
         } catch (\Exception $e) {
             return $this->errorResponse('Decrypt key error.');
         }
@@ -226,13 +226,13 @@ class ContentCryptMiddleware
         return new JsonResponse(['status' => $status, 'message' => $message], $status);
     }
 
-    public function fetchRsa($keyId)
+    public function fetchRsa($keyId, ServerRequestInterface $request = null)
     {
         if ($this->fetchRsaCallback instanceof Rsa) {
             return $this->fetchRsaCallback;
         } elseif (is_callable($this->fetchRsaCallback)) {
             $callback = $this->fetchRsaCallback;
-            return $callback($keyId);
+            return $callback($keyId, $request);
         } else {
             throw new \InvalidArgumentException('Missing property "fetchRsaCallback"');
         }
