@@ -42,6 +42,9 @@ X-Content-Encoding: rsaaes, base64
 #### Slim example:
 
 ~~~php
+
+use Psr\Http\Message\ServerRequestInterface;
+
 $app = new \Slim\App($settings);
 
 $container = $app->getContainer();
@@ -54,7 +57,9 @@ $container[ContentCryptMiddleware::class] = function () {
         'binary_output' => false,
     ]);
 
-    $middleware->setFetchRsaCallback($rsa);
+    $middleware->setFetchRsaCallback(function ($keyId, ServerRequestInterface $request) use ($rsa) {
+        return $rsa;
+    });
     return $middleware;
 };
 
@@ -93,18 +98,20 @@ payload
 #### Slim example:
 
 ~~~php
+use Psr\Http\Message\ServerRequestInterface;
+
 $app = new \Slim\App($settings);
 
 $container = $app->getContainer();
 $container[ContentSignatureMiddleware::class] = function () {
     $middleware = new ContentSignatureMiddleware();
-    $middleware->setFetchRsaCallback(function () {
+    $middleware->setFetchRsaCallback(function ($keyId, ServerRequestInterface $request) {
         return "123456";
     });
     return $middleware;
 };
 
-$app->post('/test', function (\Psr\Http\Message\ServerRequestInterface $request, \Slim\Http\Response $response) {
+$app->post('/test', function (ServerRequestInterface $request, $response) {
     $rawBody = $request->getBody();
     return $request->write($rawBody);
 })->add(ContentSignatureMiddleware::class);
