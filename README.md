@@ -76,6 +76,11 @@ $app->run();
 
 Content signature verification using hash HMAC.
 
+
+在`POST`, `PUT`, `PATCH` 请求中, 对HTTP内容进行 HMAC-HASH 方式签名计算.
+
+内容签名主要是用于校验传输内容的合法性, 避免接口泄漏, 被恶意使用.
+
 #### HTTP stream:
 
 ~~~
